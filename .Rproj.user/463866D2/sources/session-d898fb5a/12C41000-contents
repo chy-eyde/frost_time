@@ -1,0 +1,46 @@
+# Fix line grouping so it remains continuous across color changes
+
+library(ggplot2)
+library(gganimate)
+
+# Your data
+dat <- data.frame(
+  enr = c(5, 10, 15, 20, 25),            # bar heights
+  est = c(10, 10, 10, 19, 24),            # line values
+  year = 2021:2025,                       # x-axis
+  barcolor = c("azure2", "azure2",      # first two light gray
+               "cadetblue3", "cadetblue3", "cadetblue3")  # rest light blue
+)
+
+# Clean theme
+my_theme <- theme(
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_blank(),
+  axis.line = element_line(colour = "black")
+)
+
+# Plot with explicit grouping for the line
+p <- ggplot(dat, aes(x = year, y = enr)) +
+  # bars with custom colors
+  geom_col(aes(fill = barcolor)) +
+  
+  # line continues without breaks by setting group = 1
+  geom_line(aes(y = est, group = 1), color = "red", size = 1) +
+  geom_point(aes(y = est), shape = 21, size = 5, fill = "red") +
+  
+  # use identity scale to apply colors directly
+  scale_fill_identity() +
+  scale_x_continuous(breaks = dat$year) +
+  scale_y_continuous(name = 'Price') +
+  my_theme +
+  
+  # animate cumulatively by year
+  transition_manual(year, cumulative = TRUE)
+
+# Render animation (looping GIF)
+animate(p,
+        nframes = length(dat$year),
+        fps     = 1,
+        renderer = gifski_renderer(loop = TRUE))
+
