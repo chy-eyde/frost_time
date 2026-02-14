@@ -7,7 +7,7 @@ library(tidyr)
 
 # your toy data
 
-
+#TEST HERE 
 # # build plot + transition + shadow
 # p <-  #bar chart with animation - bars appear one-by-one and then loop. 
 #   ggplot(g, aes(x = x, y = a)) +
